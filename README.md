@@ -1,0 +1,2 @@
+# DiscumRaidBot
+Simple Discum example
