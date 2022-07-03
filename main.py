@@ -4,41 +4,40 @@ import time
 import random
 import os
 import threading
-file = open("users.txt", "r")
 tokens = open("tokens.txt", "r")
-message = ""
-message2 = ""
-message3 = ""
-message4 = ""
-message5 = ""
+file = open("users.txt", "r")
+channels = open("channels.txt", "r")
+messageSpamArr = []
 def generateMessage():
-    messageTemp = ""
+    messageLength = 0
+    currentMessage = 0
     for line in file:
         line = line.strip()
-        messageTemp += "<@" + line + ">"
-    print(messageTemp)
-def spammer(token):
+        if messageLength == 0:
+            messageSpamArr.append("<@" + line + ">")
+        else:
+            messageSpamArr[currentMessage] += "<@" + line + ">"
+        messageLength += 21
+        if messageLength >= 1995:
+            currentMessage += 1
+            messageLength = 0
+    for message in messageSpamArr:
+        print(message + '\n')
+
+
+
+def spammer(token, channelID, message):
     bot = discum.Client(token=token)
     while True:
-        bot.sendMessage("channelIDHere", message)
-        bot.sendMessage("", message)
-        bot.sendMessage("", message)
-        bot.sendMessage("", message2)
-        bot.sendMessage("", message2)
-        bot.sendMessage("", message2)
-        bot.sendMessage("", message3)
-        bot.sendMessage("", message3)
-        bot.sendMessage("", message3)
-        bot.sendMessage("", message4)
-        bot.sendMessage("", message4)
-        bot.sendMessage("", message4)
-        bot.sendMessage("", message5)
-        bot.sendMessage("", message5)
-        bot.sendMessage("", message5)
+        time.sleep(random.uniform(5, 20))
+        bot.sendMessage(channelID, message)
 def raid():
-    for line in tokens:
-        tokenTemp = line.strip()
-        thread = threading.Thread(target=spammer, args=(tokenTemp,))
-        thread.start()
-#generateMessage()
-#raid()
+    for token in tokens:
+        token = token.strip()
+        for channel in channels:
+            channel = channel.strip()
+            for message in messageSpamArr:
+                thread = threading.Thread(target=spammer, args=(token, channel, message))
+                thread.start()
+generateMessage()
+raid()
