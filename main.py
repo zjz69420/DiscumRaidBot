@@ -29,7 +29,7 @@ def generateMessage():
 def spammer(token, channelID, message, sleep):
     bot = discum.Client(token=token)
     while True:
-        time.sleep(random.uniform(sleep + 5, sleep - 5))
+        time.sleep(random.uniform(1, sleep * 2))
         bot.sendMessage(channelID, message)
 def raid(sleep):
     tokens.seek(0)
