@@ -1,34 +1,55 @@
 import discum
+import requests
+import time
+import random
 import os
-tokenInput = input("Enter your user token: ")
-serverID = input("Input server id: ")
-channelID = input("Input channel id: ")
-client = discum.Client(token=tokenInput) 
+import threading
+tokens = open("tokens.txt", "r")
+file = open("users.txt", "r")
+channels = open("channels.txt", "r")
+messageSpamArr = []
 
-def close_after_fetching(resp, guild_id):
-    if client.gateway.finishedMemberFetching(guild_id):
-        lenmembersfetched = len(client.gateway.session.guild(guild_id).members)
-        print(str(lenmembersfetched) + ' members fetched')
-        client.gateway.removeCommand({'function': close_after_fetching, 'params': {'guild_id': guild_id}})
-        client.gateway.close()
 
-def get_members(guild_id, channel_id):
-    client.gateway.fetchMembers(guild_id, channel_id, keep='all', wait=1)
-    client.gateway.command({'function': close_after_fetching, 'params': {'guild_id': guild_id}})
-    client.gateway.run()
-    client.gateway.resetSession()
-    return client.gateway.session.guild(guild_id).members
+def generateMessage():
+    messageLength = 0
+    currentMessage = 0
+    for line in file:
+        line = line.strip()
+        if messageLength == 0:
+            messageSpamArr.append("<@" + line + ">")
+        else:
+            messageSpamArr[currentMessage] += "<@" + line + ">"
+        messageLength += 21
+        if messageLength >= 1995:
+            currentMessage += 1
+            messageLength = 0
 
-members = get_members(serverID, channelID) #place the corresponding things
-memberList = []
-for memberID in members:
-    memberList.append(memberID)
-    print(memberID)
 
-f = open('users.txt', "a")
-for element in memberList:
-    writeString = element
-    f.write(writeString + "\n")
-    print(writeString + "\n")
+def spammer(token, channelID, message, sleep):
+    bot = discum.Client(token=token)
+    while True:
+        time.sleep(random.uniform(sleep + 5, sleep - 5))
+        bot.sendMessage(channelID, message)
 
-f.close()
+
+def raid(sleepTime):
+    for token in tokens:
+        token = token.strip()
+        print(token)
+        for channel in channels:
+            channel = channel.strip()
+            print(channel)
+            for message in messageSpamArr:
+                print(message)
+                thread = threading.Thread(target=spammer, args=(token, channel, message, sleepTime))
+                thread.start()
+generateMessage()
+channelCount = len(channels.readlines())
+print(channelCount)
+messageCount = len(messageSpamArr)
+print(messageCount)
+sleepTiming = messageCount * channelCount * 2
+if sleepTiming < 5:
+    sleepTiming = 6
+print(sleepTiming)
+raid(sleepTiming)
