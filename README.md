@@ -1,4 +1,4 @@
 # Discord Server Raid Tool 
-Simple Discum raid bot example\n
-For educational use only\n
-Proxy support will be added in the future\n
+Simple Discum raid bot example.<br/>
+For educational use only.<br/>
+Proxy support will be added in the future.<br/>
