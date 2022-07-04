@@ -46,6 +46,6 @@ channelCount = len(channels.readlines())
 print(channelCount)
 messageCount = len(messageSpamArr)
 print(messageCount)
-sleepTiming = messageCount * channelCount
+sleepTiming = messageCount * channelCount * 1.5
 print(sleepTiming)
 raid(sleepTiming)
