@@ -26,18 +26,26 @@ def generateMessage():
 
 
 
-def spammer(token, channelID, message):
+def spammer(token, channelID, message, sleep):
     bot = discum.Client(token=token)
     while True:
-        time.sleep(random.uniform(10, 15))
+        time.sleep(random.uniform(sleep + 5, sleep - 5))
         bot.sendMessage(channelID, message)
-def raid():
+def raid(sleep):
+    tokens.seek(0)
     for token in tokens:
         token = token.strip()
+        channels.seek(0)
         for channel in channels:
             channel = channel.strip()
             for message in messageSpamArr:
-                thread = threading.Thread(target=spammer, args=(token, channel, message))
+                thread = threading.Thread(target=spammer, args=(token, channel, message, sleep))
                 thread.start()
 generateMessage()
-raid()
+channelCount = len(channels.readlines())
+print(channelCount)
+messageCount = len(messageSpamArr)
+print(messageCount)
+sleepTiming = messageCount * channelCount * 2
+print(sleepTiming)
+raid(sleepTiming)
